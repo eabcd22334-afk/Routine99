@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMRC সাইন্স বিভাগ - রুটিন ২০২৬</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600&display=swap');
+        
+        html { scroll-behavior: smooth; }
+        
+        body { 
+            font-family: 'Hind Siliguri', sans-serif; 
+            background: linear-gradient(145deg, #2c2c2c, #121212); 
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 600px; margin: auto; }
+
+        /* গ্লাস ইফেক্ট ও শ্যাডো স্টাইল */
+        .header-box, .exam-item { 
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+        }
+
+        .header-box { padding: 30px; text-align: center; margin-bottom: 40px; }
+
+        h2.section-title { margin-top: 40px; color: #888; font-size: 1.2rem; border-bottom: 1px solid #333; padding-bottom: 10px; }
+
+        .exam-item { 
+            padding: 25px; 
+            margin: 30px 0; 
+            cursor: pointer; 
+            transition: all 0.4s ease;
+        }
+
+        .exam-item:hover { 
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.7);
+            transform: translateY(-8px);
+        }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 1000; }
+        
+        .modal-content { 
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 20% auto; padding: 40px; width: 85%; max-width: 400px; border-radius: 30px; text-align: center;
+        }
+
+        .footer { text-align: center; margin-top: 60px; font-weight: 600; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-box">
+            <h1>ড. মাহবুবুর রহমান মোল্লা কলেজ</h1>
+            <p>সাইন্স বিভাগ | বর্ষ সমাপনী পরীক্ষা - ২০২৬</p>
+        </div>
+
+        <h2 class="section-title">তত্ত্বীয় পরীক্ষা</h2>
+        <div id="theory-list"></div>
+
+        <h2 class="section-title">ব্যবহারিক পরীক্ষা</h2>
+        <div id="practical-list"></div>
+
+        <div class="footer">
+            <p> Developed By</p>
+            <p>Johirul islam sagor</p>
+            <p>Roll: 2042 | Section - D</p>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2 id="m-subject" style="margin-top:0; color:#fff;"></h2>
+            <p>তারিখ: <span id="m-date"></span></p>
+            <p>বার: <span id="m-day"></span></p>
+            <p>বিষয় কোড: <span id="m-code"></span></p>
+            <p>সময়: <span id="m-time"></span></p>
+            <p>অবশিষ্ট সময়: <br><strong id="m-countdown" style="color:#a0a0a0; font-size:1.4rem"></strong></p>
+            <button onclick="document.getElementById('modal').style.display='none'" style="margin-top:20px; padding:12px 30px; border-radius:50px; border:none; background:#333; color:#fff; cursor:pointer;">বন্ধ করুন</button>
+        </div>
+    </div>
+
+    <script>
+        const exams = [
+            {type: "theory", date: "2026-07-23", day: "বৃহস্পতিবার", subject: "ইংরেজি ১ম পত্র", code: "১০৭", time: "01:30 PM"},
+            {type: "theory", date: "2026-07-26", day: "রবিবার", subject: "পদার্থবিজ্ঞান ১ম পত্র", code: "১৭৪", time: "01:30 PM"},
+            {type: "theory", date: "2026-07-28", day: "মঙ্গলবার", subject: "তথ্য ও যোগাযোগ প্রযুক্তি", code: "২৭৫", time: "01:30 PM"},
+            {type: "theory", date: "2026-07-30", day: "বৃহস্পতিবার", subject: "বাংলা ১ম পত্র", code: "১০১", time: "01:30 PM"},
+            {type: "theory", date: "2026-08-02", day: "রবিবার", subject: "রসায়ন ১ম পত্র", code: "১৭৬", time: "01:30 PM"},
+            {type: "theory", date: "2026-08-04", day: "মঙ্গলবার", subject: "জীববিজ্ঞান ১ম পত্র", code: "১৭৮", time: "01:30 PM"},
+            {type: "theory", date: "2026-08-06", day: "বৃহস্পতিবার", subject: "উচ্চতর গণিত ১ম পত্র", code: "২৬৫", time: "01:30 PM"},
+            {type: "practical", date: "2026-07-18", day: "শনিবার", subject: "ব্যবহারিক: রসায়ন ১ম পত্র", code: "১৭৬", time: "09:30 AM"},
+            {type: "practical", date: "2026-07-18", day: "শনিবার", subject: "ব্যবহারিক: উচ্চতর গণিত ১ম পত্র", code: "২৬৫", time: "09:30 AM"},
+            {type: "practical", date: "2026-07-19", day: "রবিবার", subject: "ব্যবহারিক: পদার্থবিজ্ঞান ১ম পত্র", code: "১৭৪", time: "09:30 AM"},
+            {type: "practical", date: "2026-07-19", day: "রবিবার", subject: "ব্যবহারিক: জীববিজ্ঞান ১ম পত্র", code: "১৭৮", time: "09:30 AM"}
+        ];
+
+        const theoryList = document.getElementById('theory-list');
+        const practicalList = document.getElementById('practical-list');
+        let countdownInterval;
+
+        exams.forEach((ex) => {
+            const div = document.createElement('div');
+            div.className = 'exam-item';
+            div.innerHTML = `<h3 style="margin:0">${ex.subject}</h3>`;
+            div.onclick = () => showModal(ex);
+            if (ex.type === "theory") theoryList.appendChild(div);
+            else practicalList.appendChild(div);
+        });
+
+        function showModal(ex) {
+            if (countdownInterval) clearInterval(countdownInterval);
+            document.getElementById('m-subject').innerText = ex.subject;
+            document.getElementById('m-date').innerText = ex.date;
+            document.getElementById('m-day').innerText = ex.day;
+            document.getElementById('m-code').innerText = ex.code;
+            document.getElementById('m-time').innerText = ex.time + " - " + (ex.type === "theory" ? "04:00 PM" : "12:30 PM");
+            
+            const target = new Date(ex.date + "T" + (ex.time.includes("01:30") ? "13:30:00" : "09:30:00"));
+            countdownInterval = setInterval(() => {
+                const diff = target - new Date();
+                if (diff < 0) { document.getElementById('m-countdown').innerText = "কমপ্লিট"; clearInterval(countdownInterval); }
+                else {
+                    const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000), m = Math.floor((diff % 3600000) / 60000);
+                    document.getElementById('m-countdown').innerText = d + " দিন " + h + " ঘণ্টা " + m + " মিনিট";
+                }
+            }, 1000);
+            document.getElementById('modal').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
