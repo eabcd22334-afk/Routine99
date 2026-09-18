@@ -375,8 +375,8 @@ const s=await getDoc(doc(db,"settings","headerConfig"));
 const d=s.exists()?s.data():{};
 $("editSuperSub").value=d.superSub||"শ্রেণি: দ্বাদশ";
 $("editHeaderTitle").value=d.headerTitle||"ড. মাহবুবুর রহমান মোল্লা কলেজ";
-$("editSubHeader").value=d.subHeader||"ইংরেজি দ্বিতীয়পত্র সাজেশন - ২০২৬";
-$("editClassInfo").value=d.classInfo||"পরীক্ষার্থী: বিজ্ঞান বিভাগ";
+$("editSubHeader").value=d.subHeader||
+$("editClassInfo").value=d.classInfo||
 }catch(e){console.error(e);}
 };
 
